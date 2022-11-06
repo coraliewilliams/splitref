@@ -12,9 +12,12 @@
 
 
 
-# Set path where you
-funcDir <- "C:/Users/z5394590/OneDrive - UNSW/Documents/R/simstudies/splitRef/"
-source(file.path(funcDir, "functions_splitref_oct2022.R"))
+#### Load functions
+# Set path where the function script is saved
+funcDir <- "C:/Users/z5394590/OneDrive - UNSW/Documents/Projects/splitref/R"
+
+# Load functions from source file
+source(file.path(funcDir, "functions_splitref.R"))
 
 
 
