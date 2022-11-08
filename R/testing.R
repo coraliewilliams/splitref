@@ -1,23 +1,41 @@
-# Testing script
-# Random select and split reference list
+# Testing script for functions
 
 
 ##################### 
 #### For testing ------------------------------------------
 #####################
 
-#**
-### IMPORTANT: Before running tests make sure you have the functions loaded and 
-#**
+
+# Load functions from source file
+source("R/functions_splitref.R")
 
 
+
+# quick tests -----------------------------------------
+
+# List of references as data frame 
+articles <- read_csv("data/articles.csv", show_col_types=F)
+
+# pilot number
+n <- -2
+n <- "not_an_integer"
+n <- 10^10
+
+# test getpilotref function
+getpilotref(articles, n=asd)
+
+
+
+
+
+
+
+
+# \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 #### Load functions -------------
 # Set path where the function script is saved
 funcDir <- "C:/Users/z5394590/OneDrive - UNSW/Documents/Projects/splitref/R"
-
-# Load functions from source file
-source(file.path(funcDir, "functions_splitref.R"))
 
 
 #### Get file path ----------------
@@ -28,11 +46,8 @@ datdir <- rprojroot::find_rstudio_root_file("data")
 # Obtain path of csv file exported from Rayyan with full reference list (make sure to include name)
 filePath <- file.path(datdir, "articles.csv")
 
-
-
 #### getpilotref function test --------------
 getpilotref(filePath, n=15, fileName="pilot_test")
-
 
 
 #### splitref function test -----------------
