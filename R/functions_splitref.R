@@ -39,7 +39,6 @@ library(splitstackshape)
 getpilotref <- function(x, n=10, fileName="pilot", write=FALSE){
   
   if (length(n) == 1L && is.integer(n) && n>0 && n<=nrow(x)) { 
-  
     # get list of indexes for each reference
     x$ids <- 1:nrow(x)
     
@@ -50,14 +49,12 @@ getpilotref <- function(x, n=10, fileName="pilot", write=FALSE){
     pdat <<- pdat[,-which(colnames(pdat)=="ids")]
     
     } else {
-
     # error message if provided n value is not valid 
     stop("Incompatible value n supplied, please check. n must be a positive integer no higher than the total number of references provided.") 
       
-      }
+    }
   
   if (write==T){
-    
     # save generated pilot list in working directory using the name provided
     write_csv(pilot, paste(fileName, ".csv", sep=""), na="")
     
@@ -72,7 +69,7 @@ getpilotref <- function(x, n=10, fileName="pilot", write=FALSE){
 
 
 # -----------------------------------
-# splitref_two function 
+# splitref_prop function 
 # -----------------------------------
 ## Description: 
 #     Randomly split reference list for collaborative work between k=2 collaborators

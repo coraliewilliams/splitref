@@ -25,4 +25,5 @@ getpilotref(articles, n="100")
 getpilotref(articles, n="abc")
 getpilotref(articles, n=1000)
 
-
+# test write argument 
+getpilotref(articles, n=2, write=T)
