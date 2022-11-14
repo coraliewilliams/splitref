@@ -12,7 +12,11 @@ library(splitstackshape)
 # Functions to randomly select and split a list of references from an exported Rayyan project for a pilot assessment or
 # for a collaborative Rayyan project. 
 
-
+######
+# getpilotref : line 22 to 62
+# 
+#
+#
 
 
 ##################### 
@@ -34,26 +38,85 @@ library(splitstackshape)
 
 getpilotref <- function(x, n=10, fileName="pilot", write=FALSE){
   
-  if (!n%in%c(1:dim(x)[1])) { 
-    # error message if provided n value is not valid 
-    stop("Incompatible value n supplied. n must be a positive integer and no higher than the total number of references provided.") 
-    
-  } else {
-
+  if (length(n) == 1L && is.integer(n) && n>0 && n<=nrow(x)) { 
+  
     # get list of indexes for each reference
     x$ids <- 1:nrow(x)
+    
     # sample randomly a list n of indexes
-    pilot <<- x[which(x$ids %in% sample(x$ids, n)),]
+    pdat <- x[which(x$ids %in% sample(x$ids, n)),]
+    
+    # remove ids column generated for split
+    pdat <<- pdat[,-which(colnames(pdat)=="ids")]
+    
+    } else {
 
-    if (write==T){
+    # error message if provided n value is not valid 
+    stop("Incompatible value n supplied, please check. n must be a positive integer no higher than the total number of references provided.") 
+      
+      }
+  
+  if (write==T){
+    
     # save generated pilot list in working directory using the name provided
-    write_csv(pilot, fileName, na="")
+    write_csv(pilot, paste(fileName, ".csv", sep=""), na="")
     
     # print out
-    cat(paste(c("Pilot random sample set of", n, "articles is saved as:", fileName, ".csv")))
+    cat(paste("Pilot random sample set of ", n, " articles is saved as: ", fileName, ".csv", sep=""))
+    
     }
-  }
 }
+
+
+
+
+
+# -----------------------------------
+# splitref_two function 
+# -----------------------------------
+## Description: 
+#     Randomly split reference list for collaborative work between k=2 collaborators
+#
+## Arguments: 
+# - x: data frame with reference list from Rayyan
+# - k: number of collaborators/splits needed (default is 2, maximum possible is 5)
+# - prop: proportion required of each split, must be an integer between 0 and 1. Default is 0.5 (equal proportions for each split)
+# - fileName: provided desired suffix of split files
+
+
+
+
+
+
+# -----------------------------------
+# splitref_k function 
+# -----------------------------------
+## Description: 
+#     Randomly split reference list for collaborative work with multiple people (k>=2)
+#
+## Arguments: 
+# - x: data frame with reference list from Rayyan
+# - n: number of collaborators/splits needed (default is 2, maximum possible is 5)
+# - prop: proportion required of each split, must be an integer between 0 and 1. Default is 0.5 (equal proportions for each split)
+# - fileName: provided desired suffix of split files
+
+
+
+
+
+
+# -----------------------------------
+# splitref_kprop function 
+# -----------------------------------
+## Description: 
+#     Randomly split reference list for collaborative work with multiple people (k>=2)
+#
+## Arguments: 
+# - x: data frame with reference list from Rayyan
+# - n: number of collaborators/splits needed (default is 2, maximum possible is 5)
+# - prop: proportion required of each split, must be an integer between 0 and 1. Default is 0.5 (equal proportions for each split)
+# - fileName: provided desired suffix of split files
+
 
 
 
@@ -88,13 +151,12 @@ splitref <- function(x, k=2, prop=0.5, fileName="split"){
     # error message if prop values are not valid for number of splits given
     if (!length(prop)==k) { 
       stop("Incompatible proportion values supplied. prop argument must be a vector with size equal to n.") 
-      } else {
-        # input proportions for split
-        ratio <- prop
-        split_ids <- floor(ratio * nrow(x))
+    } else {
+      # input proportions for split
+      split_ids <- floor(prop * nrow(x))
     }
   }
-
+  
   
   if(k==2){
     # for k=2 collaborators
@@ -172,7 +234,7 @@ splitref <- function(x, k=2, prop=0.5, fileName="split"){
          A maximum of 5 splits is possible.")
   }
   
-
+  
   # print out summary of splitting and data files saved
   p <- ifelse(length(prop)==1, "equal", "unequal")
   cat(paste(c("Reference list was randomly split into", k, "based on", p, "proportions", "(", prop, ")")))
@@ -184,50 +246,10 @@ splitref <- function(x, k=2, prop=0.5, fileName="split"){
 
 
 
-# -----------------------------------
-# splitref_two function 
-# -----------------------------------
-## Description: 
-#     Randomly split reference list for collaborative work between k=2 collaborators
-#
-## Arguments: 
-# - x: data frame with reference list from Rayyan
-# - k: number of collaborators/splits needed (default is 2, maximum possible is 5)
-# - prop: proportion required of each split, must be an integer between 0 and 1. Default is 0.5 (equal proportions for each split)
-# - fileName: provided desired suffix of split files
-
-
-
-
-
 
 # -----------------------------------
-# splitref_k function 
+# dedup_ref function 
 # -----------------------------------
 ## Description: 
-#     Randomly split reference list for collaborative work with multiple people (k>=2)
+#     Deduplicate 
 #
-## Arguments: 
-# - x: data frame with reference list from Rayyan
-# - n: number of collaborators/splits needed (default is 2, maximum possible is 5)
-# - prop: proportion required of each split, must be an integer between 0 and 1. Default is 0.5 (equal proportions for each split)
-# - fileName: provided desired suffix of split files
-
-
-
-
-
-
-# -----------------------------------
-# splitref_kprop function 
-# -----------------------------------
-## Description: 
-#     Randomly split reference list for collaborative work with multiple people (k>=2)
-#
-## Arguments: 
-# - x: data frame with reference list from Rayyan
-# - n: number of collaborators/splits needed (default is 2, maximum possible is 5)
-# - prop: proportion required of each split, must be an integer between 0 and 1. Default is 0.5 (equal proportions for each split)
-# - fileName: provided desired suffix of split files
-
-
