@@ -49,9 +49,8 @@ getpilotref <- function(x, n=10, fileName="pilot", write=FALSE){
     pdat <<- pdat[,-which(colnames(pdat)=="ids")]
     
     } else {
-    # error message if provided n value is not valid 
-    stop("Incompatible value n supplied, please check. n must be a positive integer no higher than the total number of references provided.") 
-      
+      # error message if provided n value is not valid 
+      stop("Incompatible value n supplied, please check. n must be a positive integer no higher than the total number of references provided.") 
     }
   
   if (write==T){
@@ -68,6 +67,8 @@ getpilotref <- function(x, n=10, fileName="pilot", write=FALSE){
 
 
 
+# Look at this: https://stackoverflow.com/questions/60140954/creating-multiple-dataframes-in-a-loop-in-r
+
 # -----------------------------------
 # splitref_prop function 
 # -----------------------------------
@@ -76,12 +77,50 @@ getpilotref <- function(x, n=10, fileName="pilot", write=FALSE){
 #
 ## Arguments: 
 # - x: data frame with reference list from Rayyan
-# - k: number of collaborators/splits needed (default is 2, maximum possible is 5)
-# - prop: proportion required of each split, must be an integer between 0 and 1. Default is 0.5 (equal proportions for each split)
+# - p: vector of proportions of split, it must have two positive numerial values that sum to 1. 
 # - fileName: provided desired suffix of split files
+# - write: logical argument whether to save the pilot list as csv in current working directory
 
 
+splitref <- function(x, p=c(0.5, 0.5), fileName="split", write=F){
+  
+  
+  if (length(p)==2L && is.numeric(p) && sum(p)==1 && all(p>0)) { 
+  
+  # get random list of indexes for each reference
+  rids <- sample(1:nrow(x))
+  
+  # get index of row to split on using the first value of proportion of vector
+  spl <- floor(p[-length(p)] * nrow(x))
+  
+  # get separate split data frame based on split ids indexes
+  dat1_indexes <- rids[1:spl]
+  dat2_indexes <- rids[(spl+1):nrow(x)]
+      
+  # get separate datasets
+  dat1 <- x[dat1_indexes,] 
+  dat2 <- x[dat2_indexes,]
+      
+      if (write==T){
+        # save files
+        write_csv(dat1, paste(fileName, "_set1", ".csv", sep=""), na="")
+        write_csv(dat2, paste(fileName, "_set2",".csv", sep=""), na="")
+      }
+    
+  
+  } else {
+    # error message if provided n value is not valid 
+    stop("Incompatible value n supplied, please check. n must be a positive integer no higher than the total number of references provided.") 
+    
+    }
 
+  # print out summary of splitting and data files saved
+  p <- ifelse(length(prop)==1, "equal", "unequal")
+  cat(paste(c("Reference list was randomly split into", k, "based on", p, "proportions", "(", prop, ")")))
+  cat(paste(c("\n", k, "files were saved:\n", 
+              paste(getwd(),"/",fileName, "_set1", ".csv", sep=""))))
+  
+}
 
 
 
@@ -129,12 +168,9 @@ getpilotref <- function(x, n=10, fileName="pilot", write=FALSE){
 # - k: number of collaborators/splits needed (default is 2, maximum possible is 5)
 # - prop: proportion required of each split, must be an integer between 0 and 1. Default is 0.5 (equal proportions for each split)
 # - fileName: provided desired suffix of split files
+# - write: logical argument whether to save the pilot list as csv in current working directory
 
-splitref <- function(x, k=2, prop=0.5, fileName="split"){
-  
-  
-  # read full list of articles
-  x <- read_csv(filePath, show_col_types = FALSE)
+splitref <- function(x, k=2, prop=0.5, fileName="split", write=F){
   
   # get random list of indexes for each reference
   rids <- sample(1:nrow(x))
@@ -164,9 +200,11 @@ splitref <- function(x, k=2, prop=0.5, fileName="split"){
     dat1 <- x[dat1_indexes,] 
     dat2 <- x[dat2_indexes,]
     
-    # save files
-    write_csv(dat1, paste(fileName, "_set1", ".csv", sep=""), na="")
-    write_csv(dat2, paste(fileName, "_set2",".csv", sep=""), na="")
+    if (write==T){
+      # save files
+      write_csv(dat1, paste(fileName, "_set1", ".csv", sep=""), na="")
+      write_csv(dat2, paste(fileName, "_set2",".csv", sep=""), na="")
+    }
     
   } else if(k==3){
     # for k=3 collaborators
@@ -179,10 +217,12 @@ splitref <- function(x, k=2, prop=0.5, fileName="split"){
     dat2 <- x[dat2_indexes,]
     dat3 <- x[dat3_indexes,]
     
-    # save files
-    write_csv(dat1, paste(fileName, "_set1", ".csv", sep=""), na="")
-    write_csv(dat2, paste(fileName, "_set2",".csv", sep=""), na="")
-    write_csv(dat3, paste(fileName, "_set3",".csv", sep=""), na="")
+    if (write==T){
+      # save files
+      write_csv(dat1, paste(fileName, "_set1", ".csv", sep=""), na="")
+      write_csv(dat2, paste(fileName, "_set2",".csv", sep=""), na="")
+      write_csv(dat3, paste(fileName, "_set3",".csv", sep=""), na="")
+    }
     
   } else if (k==4){
     # for k=4 collaborators
@@ -197,11 +237,13 @@ splitref <- function(x, k=2, prop=0.5, fileName="split"){
     dat3 <- x[dat3_indexes,]
     dat4 <- x[dat4_indexes,]
     
-    # save files
-    write_csv(dat1, paste(fileName, "_set1", ".csv", sep=""), na="")
-    write_csv(dat2, paste(fileName, "_set2",".csv", sep=""), na="")
-    write_csv(dat3, paste(fileName, "_set3",".csv", sep=""), na="")
-    write_csv(dat4, paste(fileName, "_set4",".csv", sep=""), na="")
+    if (write==T){
+      # save files
+      write_csv(dat1, paste(fileName, "_set1", ".csv", sep=""), na="")
+      write_csv(dat2, paste(fileName, "_set2",".csv", sep=""), na="")
+      write_csv(dat3, paste(fileName, "_set3",".csv", sep=""), na="")
+      write_csv(dat4, paste(fileName, "_set4",".csv", sep=""), na="")
+    }
     
   } else if (k==5){
     # for k=5 collaborators
@@ -218,12 +260,14 @@ splitref <- function(x, k=2, prop=0.5, fileName="split"){
     dat4 <- x[dat4_indexes,]
     dat5 <- x[dat5_indexes,]
     
-    # save files
-    write_csv(dat1, paste(fileName, "_set1", ".csv", sep=""), na="")
-    write_csv(dat2, paste(fileName, "_set2",".csv", sep=""), na="")
-    write_csv(dat3, paste(fileName, "_set3",".csv", sep=""), na="")
-    write_csv(dat4, paste(fileName, "_set4",".csv", sep=""), na="")
-    write_csv(dat5, paste(fileName, "_set5",".csv", sep=""), na="")
+    if (write==T){
+      # save files
+      write_csv(dat1, paste(fileName, "_set1", ".csv", sep=""), na="")
+      write_csv(dat2, paste(fileName, "_set2",".csv", sep=""), na="")
+      write_csv(dat3, paste(fileName, "_set3",".csv", sep=""), na="")
+      write_csv(dat4, paste(fileName, "_set4",".csv", sep=""), na="")
+      write_csv(dat5, paste(fileName, "_set5",".csv", sep=""), na="")
+    }
     
   } else if (!k%in%(2:5)){
     # error message if number of splits provided is not valid 
