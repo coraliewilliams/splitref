@@ -27,3 +27,17 @@ getpilotref(articles, n=1000)
 
 # test write argument 
 getpilotref(articles, n=2, write=T)
+
+
+
+
+#### splitref_prop tests ----
+
+# quick test
+splitref_prop(articles)
+
+# test getpilotref function with incompatible p value
+splitref_prop(articles, p=c(0.1,0.8))
+splitref_prop(articles, p=c(0.8))
+splitref_prop(articles, p=c("ajkdnafk"))
+

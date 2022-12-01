@@ -43,10 +43,10 @@ getpilotref <- function(x, n=10, fileName="pilot", write=FALSE){
     x$ids <- 1:nrow(x)
     
     # sample randomly a list n of indexes
-    pdat <- x[which(x$ids %in% sample(x$ids, n)),]
+    pilotdat <- x[which(x$ids %in% sample(x$ids, n)),]
     
     # remove ids column generated for split
-    pdat <<- pdat[,-which(colnames(pdat)=="ids")]
+    pilotdat <<- pilotdat[,-which(colnames(pdat)=="ids")]
     
     } else {
       # error message if provided n value is not valid 
@@ -55,7 +55,7 @@ getpilotref <- function(x, n=10, fileName="pilot", write=FALSE){
   
   if (write==T){
     # save generated pilot list in working directory using the name provided
-    write_csv(pilot, paste(fileName, ".csv", sep=""), na="")
+    write_csv(pilotdat, paste(fileName, ".csv", sep=""), na="")
     
     # print out
     cat(paste("Pilot random sample set of ", n, " articles is saved as: ", fileName, ".csv", sep=""))
@@ -64,10 +64,10 @@ getpilotref <- function(x, n=10, fileName="pilot", write=FALSE){
 }
 
 
-
-
-
 # Look at this: https://stackoverflow.com/questions/60140954/creating-multiple-dataframes-in-a-loop-in-r
+
+
+
 
 # -----------------------------------
 # splitref_prop function 
@@ -77,51 +77,79 @@ getpilotref <- function(x, n=10, fileName="pilot", write=FALSE){
 #
 ## Arguments: 
 # - x: data frame with reference list from Rayyan
-# - p: vector of proportions of split, it must have two positive numerial values that sum to 1. 
+# - p: vector of proportions of split, it must have two positive numerical values that sum to 1. 
 # - fileName: provided desired suffix of split files
 # - write: logical argument whether to save the pilot list as csv in current working directory
 
 
-splitref <- function(x, p=c(0.5, 0.5), fileName="split", write=F){
+splitref_prop <- function(x, p=c(0.5, 0.5), fileName = "split", write = F) {
   
-  
-  if (length(p)==2L && is.numeric(p) && sum(p)==1 && all(p>0)) { 
-  
-  # get random list of indexes for each reference
-  rids <- sample(1:nrow(x))
-  
-  # get index of row to split on using the first value of proportion of vector
-  spl <- floor(p[-length(p)] * nrow(x))
-  
-  # get separate split data frame based on split ids indexes
-  dat1_indexes <- rids[1:spl]
-  dat2_indexes <- rids[(spl+1):nrow(x)]
+    if (length(p) == 2L && is.numeric(p) && sum(p) == 1 && all(p > 0)) {
+      # get random list of indexes for each reference
+      rids <- sample(1:nrow(x))
       
-  # get separate datasets
-  dat1 <- x[dat1_indexes,] 
-  dat2 <- x[dat2_indexes,]
+      # get index of row to split on using the first value of proportion of vector
+      spl <- floor(p[-length(p)] * nrow(x))
       
-      if (write==T){
+      # get separate split data frame based on split ids indexes
+      indx1 <- rids[1:spl]
+      indx2 <- rids[(spl + 1):nrow(x)]
+      
+      # get separate datasets
+      split1 <<- x[indx1,]
+      split2 <<- x[indx2,]
+      
+      # print out message
+      cat(paste(c("Reference list was randomly split into",length(p), "proportions of", p[1]*100, "% and", p[2]*100, "%")))
+      
+      if (write == T) {
         # save files
-        write_csv(dat1, paste(fileName, "_set1", ".csv", sep=""), na="")
-        write_csv(dat2, paste(fileName, "_set2",".csv", sep=""), na="")
+        write_csv(split1, paste(fileName, "_set1", ".csv", sep = ""), na ="")
+        write_csv(split2, paste(fileName, "_set2", ".csv", sep = ""), na ="")
+        
+        # print out summary of splitting and data files saved
+        p <- ifelse(length(prop) == 1, "equal", "unequal")
+        cat(paste(c("\n",k,"files were saved:\n",paste(getwd(), "/", fileName, "_set1", ".csv", sep = ""))))
+        
       }
-    
   
-  } else {
-    # error message if provided n value is not valid 
-    stop("Incompatible value n supplied, please check. n must be a positive integer no higher than the total number of references provided.") 
-    
+    } else {
+      # error message if provided n value is not valid
+      stop("Incompatible values for p (proportions) supplied, please check.
+           Proportion values must be positive integers less than 1, and the total sum of all proportions should equal to 1.")
     }
-
-  # print out summary of splitting and data files saved
-  p <- ifelse(length(prop)==1, "equal", "unequal")
-  cat(paste(c("Reference list was randomly split into", k, "based on", p, "proportions", "(", prop, ")")))
-  cat(paste(c("\n", k, "files were saved:\n", 
-              paste(getwd(),"/",fileName, "_set1", ".csv", sep=""))))
-  
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+####################################################################################################################
 
 
 # -----------------------------------
@@ -135,8 +163,6 @@ splitref <- function(x, p=c(0.5, 0.5), fileName="split", write=F){
 # - n: number of collaborators/splits needed (default is 2, maximum possible is 5)
 # - prop: proportion required of each split, must be an integer between 0 and 1. Default is 0.5 (equal proportions for each split)
 # - fileName: provided desired suffix of split files
-
-
 
 
 
@@ -156,6 +182,8 @@ splitref <- function(x, p=c(0.5, 0.5), fileName="split", write=F){
 
 
 
+
+####################################################################################################################
 
 # -----------------------------------
 # splitref function 
@@ -287,6 +315,8 @@ splitref <- function(x, k=2, prop=0.5, fileName="split", write=F){
 
 
 
+
+####################################################################################################################
 
 # -----------------------------------
 # dedup_ref function 
