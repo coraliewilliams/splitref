@@ -56,18 +56,20 @@ ui <- fluidPage(
     ),
     
     
-    #### 2: Split references -----------------------------------------
+    #### 2: Split references (k=2 collab) -----------------------------------------
     tabPanel("Split",
              
              # Sidebar panel with input and output definitions -------
              sidebarPanel(
                
+               # Copy the chunk below to make a group of checkboxes
+               checkboxInput("proptype", "Proportions type"),
+               
                # Input: Specify number of splits of the references list to perform
-               numericInput("n_splits", "Number of splits/collaborators:", 2, min=2, max=5),
+               numericInput("n_splits", "Proportions of split", 0.5, min=0, max=1),
                
-               # Input: Specify proportions to split data on
-               textInput("prop", "Enter proportion per split (must be an integer between 0 and 1, delimited by commas. Default is equal splits):", "equal"),
-               
+               # Input: Specify number of splits of the references list to perform
+               numericInput("n_splits", "", 0.5, min=0, max=1),
              ),
              
              # Show a data of the generated distribution
@@ -125,7 +127,26 @@ server <- function(input, output) {
   
   
   #### 2. Split ref functions
+  # define a reactive value to store the dataframe
+  df <- reactiveVal()
   
+  # when the file is uploaded, store the dataframe in the reactive value
+  observeEvent(input$file, {
+    df(read_csv(input$file$datapath))
+  })
+  
+  # create the proportions input controls dynamically based on the value of k
+  output$proportions <- renderUI({
+    tagList(
+      lapply(1:input$k, function(i) {
+        numericInput(
+          paste0("p", i),
+          paste0("Proportion for split ", i),
+          value = 1 / input$k
+        )
+      })
+    )
+  })
   
 }
 
