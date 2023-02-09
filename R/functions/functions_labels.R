@@ -41,7 +41,7 @@ dat_ocp$exclusion_reason[grep("study|model", dat_ocp$notes)] <- "not_english_lan
 ###### TEST 2
 
 # split label vector 
-notes <- strsplit(dat_k$notes, split="|", fixed=TRUE)
+notes <- strsplit(dat_lab$notes, split="|", fixed=TRUE)
 
 # Extracting Second Sub Element from List Using sapply Function
 # Only works if second sub element is not NA

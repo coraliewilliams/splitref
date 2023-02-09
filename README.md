@@ -10,27 +10,27 @@ R version: 4.2.2
 
 ## 1. Functions
 
-### Split references
+**Split references**
 
 Functions to randomly select and split a list of references from an exported Rayyan project (<https://rayyan.ai/>) for a pilot assessment or for a collaborative Rayyan project.
 
-`getpilotref`
+-   `getpilot` : randomly select n number of papers from file.
 
-`splitref_prop`
+-   `splitref_prop` : randomly split dataframe (reference list) between two collaborators.
 
-`randomsplit`
+-   `random_split` : randomly split dataframe (reference list) between k collaborators.
 
-### Reference deduplication
+**Deduplication of reference list**
 
 Function to
 
-`dedup` [on-going]
+-   `dedup` [on-going]
 
-### Exclusion labels formatting
+**Exclusion labels formatting**
 
-Function to extract label from Rayyan exported file that includes inclusion/exclusion reason as a label.
+-   `getlabel` : function to extract label from Rayyan exported file that includes inclusion/exclusion reason as a label.
 
-`getlabel`
+-   `pecotlabel` : function to derive new variable including PICO/PECO terms and exclusion reason based on pattern matching from label in exported Rayyan file.
 
 ## 2. Shiny app
 

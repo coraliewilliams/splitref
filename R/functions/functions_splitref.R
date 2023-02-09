@@ -39,25 +39,23 @@ library(splitstackshape)
 
 getpilotref <- function(x, n=10, write=FALSE, fileName="pilot"){
   
-  if (length(n) == 1L && x%%1==0 && n>0 && n<=nrow(x)) { 
-    
-    # sample randomly the vector n of row indexes and remove id column in the final dataset
-    x$ids <- 1:nrow(x)
-    pdat <- x[which(x$ids %in% sample(x$ids, n)),]
-    pilotdat <<- pdat[,-which(colnames(pdat)=="ids")]
-    
-  } else {
-    # error message n value provided is not valid 
-    stop("Incompatible value n supplied, please check. n must be a positive integer no higher than the total number of references provided.") 
-  }
+  # check if input is valid 
+  if (!is.data.frame(x)) stop("x must be a data frame")
+  if (n <= 0) stop("n must be a positive number")
+  if (n > nrow(x)) stop("n must be a smaller number than the total number of rows in the data frame")
+  if (!(is.numeric(n))) stop("n must be a integer (whole number)")
+  if (!(n %% 1 == 0)) stop("n must be a integer (whole number)")
+
+  # sample randomly the vector n of row indexes and remove id column in the final dataset
+  x$ids <- 1:nrow(x)
+  pdat <- x[which(x$ids %in% sample(x$ids, n)),]
+  pilotdat <<- pdat[,-which(colnames(pdat)=="ids")]
   
   if (write==T){
-    
     # save generated pilot list in working directory using the name provided
-    write.csv(pilotdat, paste(fileName, ".csv", sep=""), na="")
+    write_csv(pilotdat, paste(fileName, ".csv", sep=""), na="", row.names=F)
     # print out summary of saved file name
     cat(paste("Pilot random sample set of ", n, " articles is saved as: ", fileName, ".csv", sep=""))
-    
   }
 }
 
@@ -116,56 +114,6 @@ splitref_prop <- function(x, p=c(0.5, 0.5), fileName = "split", write = F) {
 
 
 # -----------------------------------
-# splitref function 
-# -----------------------------------
-## Description: 
-#     Randomly split into equal proportions a reference list for collaborative work with multiple people (k>=2)
-#
-## Arguments: 
-# - x: dataframe with reference list from Rayyan
-# - n: number of collaborators/splits needed (default is 2, maximum possible is 5)
-# - prop: proportion required of each split, must be an integer between 0 and 1. Default is 0.5 (equal proportions for each split)
-# - fileName: provided desired suffix of split files
-
-splitref <- function(x, k=2, p=c(0.5,0.5)) {
-  
-  # check if input is valid
-  if (k <= 0) stop("k must be a positive number")
-  if (k > nrow(x)) stop("k must be a number smaller than the total number of entries in the dataframe")
-  if (length(p) != k) stop("p must be a vector of length k")
-  if (abs(sum(p) - 1) > 1e-10) stop("p must sum to 1")
-  
-  
-  # get random list of indexes for each reference
-  rids <- sample(1:nrow(x))
-  
-  # initialize the result list
-  result <- vector("list", k)
-  
-  # split the dataframe into k parts according to the proportions in p
-  start_index <- 1
-  
-  for (i in 1:k) {
-    # compute the number of rows for this split
-    n <- round(nrow(df) * p[i])
-    
-    # extract the rows for this split
-    result[[i]] <- df[start_index:(start_index + n - 1), ]
-    
-    # update the start index for the next split
-    start_index <- start_index + n
-  }
-  
-  # return the result
-  return(result)
-  
-  # print out message
-  cat(paste(c("Reference list was randomly split into", k, "parts")))
-  
-}
-
-
-# -----------------------------------
 # random_split function 
 # -----------------------------------
 ## Description: 
@@ -173,54 +121,58 @@ splitref <- function(x, k=2, p=c(0.5,0.5)) {
 #
 ## Arguments: 
 # - x: data frame with reference list from Rayyan
+# - k: number of splits (collaborators in screening)
 # - p: vector of proportions of split, it must have two positive numerical values that sum to 1. 
 # - fileName: provided desired suffix of split files
 # - write: logical argument whether to save the pilot list as csv in current working directory
 
-random_split <- function(x, k, p) {
+random_split <- function(x, k, p, write=FALSE) {
+  
   # check if input is valid
+  if (!is.data.frame(x)) stop("x must be a data frame")
   if (k <= 0) stop("k must be a positive number")
+  if (k > nrow(x)) stop("k must be a number smaller than the total number of entries in the dataframe")
   if (length(p) != k) stop("p must be a vector of length k")
   if (abs(sum(p) - 1) > 1e-10) stop("p must sum to 1")
   
-  # shuffle the rows of the dataframe
-  df <- df[sample(nrow(df)), ]
+  # shuffle randomly rows of the input dataframe
+  x <- x[sample(nrow(x)), ]
   
-  # initialize the result list
+  # initialize list where results will be stored
   result <- vector("list", k)
   
   # split the dataframe into k parts according to the proportions in p
   start_index <- 1
   
   for (i in 1:k) {
+    
     # compute the number of rows for this split
-    n <- round(nrow(df) * p[i])
+    n <- round(nrow(x) * p[i])
     
     # extract the rows for this split
-    result[[i]] <- df[start_index:(start_index + n - 1), ]
+    result[[i]] <- x[start_index:(start_index + n - 1), ]
     
-    # name dat
+    # remove empty rows if paper list is not an even number
+    result[[i]] <- result[[i]][!apply(is.na(result[[i]]), 1, all),]
     
     # update the start index for the next split
     start_index <- start_index + n
+    
+    if (write==T){
+      # save as dataframe 
+      split <- data.frame(result[[i]])
+      # save dataframe in working directory
+      write_csv(split, paste("split", i, ".csv", sep=""), na="")
+    }
   }
   
   # return the result
   return(result)
+  
+  # print out message
+  cat(paste(c("Reference list was randomly split into", k, "parts")))
+
 }
-
-
-
-
-# create a sample dataframe
-df <- data.frame(x = 1:10, y = 11:20)
-
-# split the dataframe into 3 subsets with proportions 0.2, 0.5, and 0.3
-subsets <- random_split(df, 3, c(0.5, 0.3, 0.2))
-list2env(subsets)
-
-
-
 
 
 ####################################################################################################################
@@ -354,6 +306,3 @@ list2env(subsets)
 #               paste(getwd(),"/",fileName, "_set1", ".csv", sep=""))))
 #   
 # }
-
-
-
