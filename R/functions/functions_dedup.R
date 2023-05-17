@@ -91,7 +91,6 @@ readLines("FILENAME_deduplicated.bib") %>%
 #
 # Arguments
 # - x: data frame with reference list from Rayyan
-# - n: number of papers needed for pilot set
 # - fileName: name of file with list of articles for pilot study
 # - write: logical argument whether to save the pilot list as csv in current working directory
 
@@ -110,7 +109,6 @@ readLines("FILENAME_deduplicated.bib") %>%
 #
 # Arguments
 # - x: data frame with reference list from Rayyan
-# - n: number of papers needed for pilot set
 # - fileName: name of file with list of articles for pilot study
 # - write: logical argument whether to save the pilot list as csv in current working directory
 

@@ -1,5 +1,5 @@
 # 06/10/2022
-# Split Reference List
+# Rayyan helper app 
 
 # Load libraries 
 library(shiny)
@@ -7,6 +7,7 @@ library(readr)
 library(dplyr)
 library(purrr)
 library(splitstackshape)
+library(wordcloud)
 
 ####
 # Define UI application -----------------------------------------------------------------------------
@@ -19,7 +20,7 @@ ui <- fluidPage(
     # Set navigation page ---------------------
     
     # Title
-    navbarPage(("Split reference list"),
+    navbarPage(("Rayyan helper app"),
       
       #### 1: Pilot -------------------------
       tabPanel("Random Pilot",
@@ -29,26 +30,24 @@ ui <- fluidPage(
                  
                  # Input: Upload full reference list file  
                  fileInput("filePilot", "Choose CSV File",
-                           accept = c(".csv")),
-                 
-                 # Input: Specify number of references to randomly sample for pilot study
-                 numericInput("n_pilot", "Select number of references for pilot:", 10),
-                 
-                 # Action button
-                 actionButton("action2", "Action button", class = "btn-primary")
+                           accept = c('csv', 'comma-separated-values','.csv')),
                  
                  ),
         
         # Show a data of the generated distribution
         mainPanel(
           
-          # Output: overview of pilot set with requested number of random articles
-          h4("Random Pilot Set"),
-          tableOutput("pilot"),
+          # Input: Specify number of references to randomly sample for pilot study
+          numericInput("n_pilot", "Select number of references for pilot:", 10),
+
           
-          # Output: code verbatism
-          h5("Verbatim text output"),
-          verbatimTextOutput("txtout"),
+          # Output: overview of pilot set with requested number of random articles
+          h4("Data table"),
+          tableOutput("table"),
+          
+          # # Output: code verbatism
+          # h5("Verbatim text output"),
+          # verbatimTextOutput("txtout"),
           
           # Download button
           downloadButton("downloadData", "Download")
@@ -56,11 +55,14 @@ ui <- fluidPage(
     ),
     
     
-    #### 2: Split references (k=2 collab) -----------------------------------------
+    #### 2: Split references  -----------------------------------------
     tabPanel("Split",
              
              # Sidebar panel with input and output definitions -------
              sidebarPanel(
+               
+               # Input: Upload full reference list file  
+               fileInput("filePilot", "Choose CSV File", accept = c(".csv")),
                
                # Copy the chunk below to make a group of checkboxes
                checkboxInput("proptype", "Proportions type"),
@@ -109,24 +111,29 @@ ui <- fluidPage(
 
 server <- function(input, output) {
   
-
+  # Load functions from source file ------------------------------------
+  source("R/functions/functions_splitref.R")
+  
+  
   #### 1. Pilot functions
   
-  # Random pilot set output
-  output$pilot <- renderTable({
-    
-    # get dataframe of articles
-    dat <- getpilotref(input$filePilot, n=output$n_pilot)
-    
-    if (is.null(dat))
-        return(NULL)
-    
-    read_csv(dat$datapath, show_col_types=F)
+  # read csv file
+  dataframe<-reactive({
+    if (is.null(input$filePilot))
+      return(NULL)                
+    data<-read.csv(input$filePilot$datapath)
+    data
   })
   
+  # output csv file table
+  output$table<- renderTable({
+    dataframe()
+  })
+  
+
   
   
-  #### 2. Split ref functions
+  #### 2. Split functions
   # define a reactive value to store the dataframe
   df <- reactiveVal()
   
