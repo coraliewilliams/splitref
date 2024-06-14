@@ -6,6 +6,8 @@ Last updated: 24/01/2023
 
 R version: 4.2.2
 
+<https://coraliewilliams.github.io/splitref/vignette_rayyan_helper.html>
+
 ------------------------------------------------------------------------
 
 Functions to randomly select and split a list of references from an exported Rayyan project (<https://rayyan.ai/>) for a pilot assessment or for a collaborative Rayyan project.
