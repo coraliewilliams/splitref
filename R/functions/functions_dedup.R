@@ -96,6 +96,11 @@ readLines("FILENAME_deduplicated.bib") %>%
 
 
 
+# One function: 
+#     -> two options: exact or fuzzy
+#     -> title and abstract:
+# summary of deduplications
+# how to manage the records?
 
 
 

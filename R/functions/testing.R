@@ -68,7 +68,7 @@ eq_split_list <- random_split(articles, k=4, write=F)
 
 
 # save directly into csv files in working directory
-rand_split_list <- random_split(articles, 11, p=rep(1/11,11), write=T)
+rand_split_list <- random_split(articles, k=11)
 
  
 

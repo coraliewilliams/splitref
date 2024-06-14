@@ -42,7 +42,7 @@ These are not available in a package unfortunately :(
 
 ```{r}
 # Load functions from github repo
-source("https://raw.githubusercontent.com/coraliewilliams/splitref/main/R/functions/functions_splitref.R?token=GHSAT0AAAAAAB47OVSXA77FY4ZIVASEJRW6ZDEQFTQ")
+source("https://raw.githubusercontent.com/coraliewilliams/splitref/main/R/functions/functions_splitref.R?token=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")
 ```
 
 You should now see them loaded in your global environment:

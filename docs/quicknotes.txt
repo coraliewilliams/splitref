@@ -15,5 +15,10 @@ Exclusion labels formatting
 getlabel : function to extract label from Rayyan exported file that includes inclusion/exclusion reason as a label.
 
 pecotlabel : function to derive new variable including PICO/PECO terms and exclusion reason based on pattern matching from label in exported Rayyan file.
-----------------------------------------------------------
 
+----------------------------------------------------------
+12/06/2023
+functions for rayyan parsing columns: https://github.com/befriendabacterium/rayyanR
+
+
+----------------------------------------------------------

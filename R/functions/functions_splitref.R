@@ -21,6 +21,9 @@ pacman::p_load(readr, dplyr, purrr, splitstackshape)
 # 1. getpilotref function (line 28)
 # 2. randomsplit function (line 66)
 
+# for testing
+#x <- articles
+#n <- 10
 
 
 #### Functions -----------------------------------------------------------
@@ -67,19 +70,24 @@ getpilotref <- function(x, n=10, write=FALSE, fileName="pilot"){
 # random_split function 
 # -----------------------------------
 ## Description: 
-#     Randomly split reference list for collaborative work between k=2 collaborators and set proportions for each split (p)
+#     Randomly split reference list for collaborative work between k collaborators and set proportions for each split (p)
 #
 ## Arguments: 
 # - x: data frame with reference list from Rayyan
-# - k: number of splits (collaborators in screening)
+# - k: number of splits (collaborators in screening), default is set to 2.
 # - eq: logical argument to set whether the proportion of splits is equal (default is FALSE)
 # - p: vector of proportions of split, it must have two positive numerical values that sum to 1. 
-# - write: logical argument whether to save the pilot list as csv in current working directory (default is FALSE)
+# - write_csv: logical argument whether to save the pilot list as csv in current working directory (default is FALSE)
+# - write_csv: logical argument whether to save the pilot list as csv in current working directory (default is FALSE)
 #
 # Output: list of k dataframes
 
+### Need to add in specifications for floor or ceiling depending
+# then we can make the statement that the last split will be always the biggest or smallest
+# due to rounding this will change => provide default setting interpretation
 
-random_split <- function(x, k, eq=TRUE, p=NULL, write=FALSE) {
+
+random_split <- function(x, k=2, eq=TRUE, p=NULL, write_csv=FALSE, write_ris=FALSE) {
   
   # check if input is valid
   if (!is.data.frame(x)) stop("x must be a data frame")
